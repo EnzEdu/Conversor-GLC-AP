@@ -1,0 +1,7 @@
+G = ({S};{a,b};P;S)
+P = {S=>aSb|ab}
+fdsa
+fsdf
+sdf
+df
+f
