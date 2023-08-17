@@ -19,22 +19,28 @@ public class AutomatoPilha {
 		 * elementosGramatica[2] = simbolo do conjunto de regras de producao
 		 * elementosGramatica[3] = simbolo inicial
 		 */
-		String conteudo = gramatica.substring(
+		String conteudoGramatica = gramatica.substring(
 				gramatica.indexOf('(') + 1, gramatica.indexOf(')'));
-		String[] elementosGramatica = conteudo.split(";");
-		
+		String[] elementosGramatica = conteudoGramatica.split(";");
 		for (String f : elementosGramatica) {
 			System.out.println(f);
 		}
+		
+		/* Regras de
+		*/
+		String conteudoRegrasProducao = regrasProducao.substring(
+				regrasProducao.indexOf('{') + 1, regrasProducao.indexOf('}'));
+		
+		
 		
 		// Montagem do automato
 		
 			// Terminais "{a,b,c}" = [a, b, c]
 			ArrayList<Character> terminais = new ArrayList<Character>(
-					elementosGramatica[1]
-						.substring(1, elementosGramatica[1].length()-1)
-						.replaceAll(",", "")
-						.chars()
+					elementosGramatica[1]									// "{a,b,c}"
+						.substring(1, elementosGramatica[1].length()-1)		// "a,b,c"
+						.replaceAll(",", "")								// "abc"
+						.chars()											// "[a, b, c]
 						.mapToObj(terminal -> (char) terminal)
 						.collect(Collectors.toList())
 			);
@@ -71,6 +77,30 @@ public class AutomatoPilha {
 			}
 			*/
 		
+			ArrayList<String> estados = new ArrayList<String>(
+					Arrays.asList("q0", "q1", "qF")
+			);
+			
+			/*
+			System.out.println("Deu certo? - Estados");
+			for (String estado : estados)
+			{
+				System.out.println(estado);
+			}
+			*/
+			
+			ArrayList<String> listaRegrasProducao = new ArrayList<String>(
+					//
+			);
+		//
+	}
+	
+	public static void reconhecer(String palavra) {
+		//
+	}
+	
+	public static void computacao(
+			String simboloFita, String simboloDesempilhar, String simboloEmpilhar) {
 		//
 	}
 }
