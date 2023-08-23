@@ -297,10 +297,11 @@ public class Estado {
 				{
 					//
 					String novaPilha = matrizResultados[index][1];
+					//System.out.print(novaPilha);
 					
 					int indexSimbolo = 0;
 					int cont = 0;
-					while(indexSimbolo < novaPilha.length() && indexSimbolo < entrada.length())
+					while (indexSimbolo < novaPilha.length() && indexSimbolo < entrada.length())
 					{
 						if (novaPilha.charAt(indexSimbolo) == entrada.charAt(indexSimbolo))
 						{
@@ -311,10 +312,29 @@ public class Estado {
 							break;
 						}
 						
-						
 						indexSimbolo++;
 					}
 					
+					if (indexSimbolo != novaPilha.length())
+					{
+						int indexSimboloDepois = 1;
+						while ((novaPilha.length()-indexSimboloDepois < novaPilha.length() && entrada.length()-indexSimboloDepois < entrada.length()) && (novaPilha.length()-indexSimboloDepois != indexSimbolo))
+						{
+							if (novaPilha.charAt(novaPilha.length() - indexSimboloDepois) == entrada.charAt(entrada.length() - indexSimboloDepois))
+							{
+								cont++;
+							}
+							else
+							{
+								break;
+							}
+							
+							indexSimboloDepois++;
+						}
+						//System.out.println("   indexSimboloDepois="+indexSimboloDepois);
+					}
+					
+					//System.out.println(" " + indexSimbolo + " " + cont);
 					if (cont >= maiorStreakTerminais)
 					{
 						maiorStreakTerminais = cont;
@@ -324,7 +344,44 @@ public class Estado {
 				
 				if (indexPilhaMaisProximaDaPalavra == -1)
 				{
-					indexPilhaMaisProximaDaPalavra = 0;
+					/* Se nao houver, procura pela transicao que resulte
+					 * em uma nova pilha com o numero de terminais o
+					 * mais proximo possivel do numero de terminais
+					 * da palavra de entrada,
+					 * e a escolhe dentre as demais
+					 */
+					int numMenorTerminais = 0;
+					for (int i = 0; i < listaTransicoesEstado.size(); i++)
+					{
+						String possivelNovaPilha = matrizResultados[i][1];
+						
+						int cont = 0;
+						for (char simbolo : possivelNovaPilha.toCharArray())
+						{
+							if (terminais.indexOf(simbolo) != -1)
+							{
+								cont++;
+							}
+						}
+						
+						if (cont < numMenorTerminais && cont >= entrada.length())
+						{
+							numMenorTerminais = cont;
+							indexTransicaoEscolhida = i;
+						}
+					}
+					
+					//System.out.println("INDEX: " + indexTransicaoEscolhida);
+					if (indexTransicaoEscolhida == -1)
+					{
+						indexTransicaoEscolhida = 0;
+					}
+					
+					
+					System.out.println("pilh = " + matrizResultados[indexTransicaoEscolhida][1]);
+					return matrizResultados[indexTransicaoEscolhida];
+					
+					//System.out.println("pilh = " + matrizResultados[indexPilhaMaisProximaDaPalavra][1]);
 				}
 				
 				

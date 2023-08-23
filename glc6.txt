@@ -1,0 +1,2 @@
+G = ({S,A,B,C};{a,b};P;S)
+P = {S=>aA|bA;A=>aB|bB;B=>bC;C=>aC|bC|#}
