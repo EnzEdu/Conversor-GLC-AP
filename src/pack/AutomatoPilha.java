@@ -23,11 +23,7 @@ public class AutomatoPilha {
 		String conteudoGramatica = gramatica.substring(
 				gramatica.indexOf('(') + 1, gramatica.indexOf(')'));
 		String[] elementosGramatica = conteudoGramatica.split(";");
-		/*
-		for (String f : elementosGramatica) {
-			System.out.println(f);
-		}
-		*/
+
 		
 		/* Regras de Producao
 		*/
@@ -37,7 +33,7 @@ public class AutomatoPilha {
 		
 		
 	
-		// Montagem do automato
+		// Elementos do automato
 		
 			// Terminais "{a,b,c}" = [a, b, c]
 			ArrayList<Character> terminais = new ArrayList<Character>(
@@ -49,13 +45,6 @@ public class AutomatoPilha {
 						.collect(Collectors.toList())
 			);
 			
-			/*
-			System.out.println("Deu certo - Terminais?");
-			for (Character terminal : terminais)
-			{
-				System.out.println(terminal);
-			}
-			*/
 			
 			// Alfabeto da pilha
 			ArrayList<Character> alfabetoPilha = new ArrayList<Character>(
@@ -73,42 +62,33 @@ public class AutomatoPilha {
 						.collect(Collectors.toList())
 			);
 			
-			/*
-			System.out.println("Deu certo? - AlfabetoPilha");
-			for (Character simbolo : alfabetoPilha)
-			{
-				System.out.println(simbolo);
-			}
-			*/
-			
 		
 			ArrayList<String> estados = new ArrayList<String>(
 					Arrays.asList("q0", "q1", "qF")
 			);
-			
-			/*
-			System.out.println("Deu certo? - Estados");
-			for (String estado : estados)
-			{
-				System.out.println(estado);
-			}
-			*/
+
 			
 			ArrayList<String> listaRegrasProducao = new ArrayList<String>();
 			for (String regraProducao : listaProducoesConcatenadas)
 			{
+				// Se a variavel (lado esquerdo) nao possuir multiplas producoes
 				if (regraProducao.indexOf("|") == -1)
 				{
 					listaRegrasProducao.add(regraProducao);
 				}
+				
 				else
 				{
+					// Identifica a variavel
 					String ladoEsquerdo = regraProducao.substring(
 							0, regraProducao.indexOf(">") + 1);
 					
-					int indexInicio = regraProducao.indexOf(">");					
-					String[] ladosDireitos = regraProducao.substring(indexInicio + 1).split("\\|");
+					int indexInicio = regraProducao.indexOf(">");
 					
+					/* Separa e salva cada producao a partir daquela variavel,
+					 * iterando sobre o pipe ("|")
+					 */
+					String[] ladosDireitos = regraProducao.substring(indexInicio + 1).split("\\|");					
 					for (String ladoDireito : ladosDireitos)
 					{
 						listaRegrasProducao.add(ladoEsquerdo + ladoDireito);
@@ -128,13 +108,15 @@ public class AutomatoPilha {
 			// Adiciona as transicoes de acordo com o estado
 			if (i == 0)
 			{
+				// Transicao inicial = (vazio, vazio, simbolo inicial "S")
 				listaEstados[i].adicionaTransicao(
 						new Transicao("#", "#", "S", estados.get(1))
 				);
 			}
+			
 			else if (i == 1)
 			{
-				// Primeiro tipo
+				// Primeiro tipo de transicao = (vazio, variavel, palavra gerada)
 				for (String regraProducao : listaRegrasProducao)
 				{
 					String ladoEsquerdo = regraProducao.substring(0, regraProducao.indexOf("="));
@@ -144,7 +126,7 @@ public class AutomatoPilha {
 					);
 				}
 				
-				// Segundo tipo
+				// Segundo tipo de transicao = (terminal, terminal, vazio)
 				for (Character terminal : terminais)
 				{
 					listaEstados[i].adicionaTransicao(
@@ -152,13 +134,18 @@ public class AutomatoPilha {
 					);
 				}
 				
-				// Indo pro estado final
+				/* Transicao final = 
+				 * (teste palavra vazia, teste pilha vazia, vazio)
+				 */
 				listaEstados[i].adicionaTransicao(
 						new Transicao("?", "?", "#", estados.get(2))
 				);
 			}
 		}
 		
+		
+		// Imprime os estados e suas transicoes
+		/*
 		System.out.println("\n\nAUTOMATO COM PILHA:");
 		for (int i = 0; i < estados.size(); i++)
 		{
@@ -173,18 +160,20 @@ public class AutomatoPilha {
 			}
 			System.out.println();
 		}
+		*/
 		
 		
 		
-		
-		String entrada = "aaaaabbbbb";
-		System.out.println(reconhecer(entrada));
-		
-		
-		
+		// Entrada hard-coded
+		//String entrada = "aaaaabbbbb";
+		//System.out.println(reconhecer(entrada));
 	}
 	
-	public static String reconhecer(String palavra) {
+	
+	
+	
+	
+	public void reconhecer(String palavra) {
 		String estadoAtual = "q0";
 		String pilha = "#";
 		String result[];
@@ -263,18 +252,20 @@ public class AutomatoPilha {
 			
 			// Se a palavra estiver vazia e o estado atual for o final
 			if (palavra.equals("#") == true && estadoAtual.equals("qF") == true) {
-				return "ACEITA!";
+				System.out.println("ACEITA!");
 			}
 			else
 			{
-				return "REJEITADA!";
+				System.out.println("REJEITADA!");
 			}
 		}
 		else
 		{
-			return "REJEITADA!";
+			System.out.println("REJEITADA!");
 		}
 	}
+	
+	
 	
 	public static String[] computacao(
 			String estadoAtual, String palavra, String pilha, int tamEntrada) {

@@ -47,12 +47,50 @@ public class Main {
 			{
 				System.out.println(infalso);
 			}
+			
+			
+			/* Cria o automato com as informacoes do arquivo
+			 * (gramatica, regras de producao)
+			 */
+			AutomatoPilha ap = new AutomatoPilha(infos);
+			
+			
+			// Recebe a palavra de entrada pro automato
+			Scanner leitor = new Scanner(System.in);
+			System.out.print("Informe a palavra para reconhecimento: ");
+			String entrada = leitor.nextLine();
+			
+			while (estaCorreta(entrada) == false)
+			{
+				System.out.println("\nPalavra com formato invalido.");
+				System.out.print("Informe nova palavra para reconhecimento: ");
+				entrada = leitor.nextLine();
+			}
+
+			ap.reconhecer(entrada);
+			leitor.close();
+			
 		} catch (Exception e) {
 			System.out.println("Erro: " + e.getMessage());
 		}
 		
-		AutomatoPilha ap = new AutomatoPilha(infos);
-//		System.out.println(regex);
+
 	}
 
+	
+	
+	public static boolean estaCorreta(String palavra)
+	{
+		if (palavra.equals("") == true)
+		{
+			return false;
+		}
+		
+		if (palavra.indexOf("?") != -1)
+		{
+			return false;
+		}
+		
+		return true;
+	}
 }
