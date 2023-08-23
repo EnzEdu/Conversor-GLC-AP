@@ -29,7 +29,7 @@ public class AutomatoPilha {
 		*/
 		String conteudoProducoes = regrasProducao.substring(
 				regrasProducao.indexOf('{') + 1, regrasProducao.indexOf('}'));
-		String[] listaProducoesConcatenadas = conteudoProducoes.split(",");
+		String[] listaProducoesConcatenadas = conteudoProducoes.split(";");
 		
 		
 	

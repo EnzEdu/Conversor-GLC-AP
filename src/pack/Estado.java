@@ -458,7 +458,6 @@ public class Estado {
 						}
 					}
 					
-					System.out.println("INDEX: " + indexTransicaoEscolhida);
 					if (indexTransicaoEscolhida == -1)
 					{
 						indexTransicaoEscolhida = 0;
