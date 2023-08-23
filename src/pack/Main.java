@@ -2,10 +2,12 @@ package pack;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Main {
+	private static String nomeArquivo = "glc1.txt";
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -13,7 +15,7 @@ public class Main {
 						   "Exemplo:\n" +
 						   "G = ({S},{a,b},P,S)\n" +
 						   "P = {S=>aSb|ab}\n\n");
-		System.out.println("Escreva a GLC nao-recursiva a esquerda: ");
+		System.out.println("Abrindo o arquivo com a GLC nao-recursiva a esquerda...");
 		
 		
 
@@ -21,7 +23,7 @@ public class Main {
 		try {
 			// Cria o FileInputStream para ler o arquivo passado como parametro
 			//FileInputStream fis = new FileInputStream(args[0]);
-			FileInputStream fis = new FileInputStream("glc.txt");
+			FileInputStream fis = new FileInputStream(nomeArquivo);
 			
 			// Cria o BufferedReader
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -43,16 +45,19 @@ public class Main {
 			// Fecha a stream de leitura
 			fis.close();
 			
-			for (String infalso : infos)
+			
+			for (String info : infos)
 			{
-				System.out.println(infalso);
+				System.out.println(info);
 			}
 			
 			
 			/* Cria o automato com as informacoes do arquivo
 			 * (gramatica, regras de producao)
 			 */
+			System.out.println("Criando automato com pilha...");
 			AutomatoPilha ap = new AutomatoPilha(infos);
+			System.out.println("Criado automato com pilha!\n");
 			
 			
 			// Recebe a palavra de entrada pro automato
@@ -68,10 +73,14 @@ public class Main {
 			}
 
 			ap.reconhecer(entrada);
+			
 			leitor.close();
 			
+		} catch (FileNotFoundException e) {
+//			System.out.println("Arquivo \""  + args[0] + "\"  nao encontrado!");
+			System.out.println("Arquivo \""  + nomeArquivo + "\"  nao encontrado!");
 		} catch (Exception e) {
-			System.out.println("Erro: " + e.getMessage());
+			e.printStackTrace();
 		}
 		
 

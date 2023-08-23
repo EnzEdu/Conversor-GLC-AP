@@ -185,7 +185,7 @@ public class AutomatoPilha {
 		
 		
 		// Transicao vazia de q0		
-		result = computacao(estadoAtual, "#", pilha, palavra.length());
+		result = computacao(estadoAtual, "#", pilha, palavra);
 		estadoAtual = result[0];
 		pilha = result[1];
 		
@@ -193,30 +193,75 @@ public class AutomatoPilha {
 
 		
 		
-		// Transicoes sucessivas ate a pilha ficar igual (ou quase) a palavra
-		while (pilha.length() < palavra.length())
+		int numTerminais = 0;
+		for (char simbolo : pilha.toCharArray())
 		{
-			result = computacao(estadoAtual, "#", pilha, palavra.length());
+			if ((int) simbolo > 96 && (int) simbolo < 123)
+			{
+				numTerminais++;
+			}
+		}
+
+		/* Transicoes sucessivas em q1
+		 * consumindo o simbolo vazio
+		 * 
+		 * Transicoes sucessivas lendo o simbolo vazio ate que
+		 * o numero de terminais da pilha esteja no alcance do
+		 * numero de terminais da palavra, e
+		 * 		- a pilha seja igual a palavra
+		 * 		ou
+		 * 		- a palavra seja rejeitada
+		 */
+		while (numTerminais <= palavra.length() && (pilha.equals(palavra) == false && estadoAtual.equals("REJ") == false))
+		{
+			result = computacao(estadoAtual, "#", pilha, palavra);
 			estadoAtual = result[0];
 			pilha = result[1];
-		
+
 			System.out.println("(" + estadoAtual + ", " + palavra + ", " + pilha + ")");
+			
+			numTerminais = 0;
+			for (char simbolo : pilha.toCharArray())
+			{
+				if ((int) simbolo > 96 && (int) simbolo < 123)
+				{
+					numTerminais++;
+				}
+			}
 		}
 
 		
 		
-		// Transicoes de q1 consumindo terminais da entrada
-		while (palavra.equals("#") != true && estadoAtual.equals("REJ") != true)
+		/* Transicoes sucessivas em q1 
+		 * consumindo terminais da entrada
+		 * 
+		 * Transicoes sao realizadas ate que
+		 * 		- Palavra seja vazia
+		 * 		e
+		 * 		- Palavra nao seja rejeitada
+		 */
+		while (palavra.equals("#") == false && estadoAtual.equals("REJ") == false)
 		{
-			result = computacao(estadoAtual, palavra, pilha, palavra.length());
+			result = computacao(estadoAtual, palavra, pilha, palavra);
 			estadoAtual = result[0];
+			
+			/* Se o tamanho da pilha nova for o tamanho da pilha antiga + 1,
+			 * e se a palavra possuir apenas um simbolo,
+			 * esvazia a palavra
+			 */
+			if (result[1].length() + 1 == pilha.length() &&
+				palavra.length() == 1)
+			{
+				palavra = "#";
+			}
+			
 			
 			/* Se o tamanho da pilha antiga for o tamanho da pilha nova + 1,
 			 * e se a nova pilha for igual a pilha antiga sem o primeiro caractere,
 			 * presume-se um consumo de caractere da palavra de entrada
 			 * Entao, a palavra eh atualizada
 			 */
-			if (result[1].length() + 1 == pilha.length() &&
+			else if (result[1].length() + 1 == pilha.length() &&
 				result[1].equals(pilha.substring(1)) == true)
 			{
 				palavra = palavra.substring(1);
@@ -244,14 +289,15 @@ public class AutomatoPilha {
 		if (estadoAtual.equals("REJ") == false)
 		{
 			// Testa se a pilha esta vazia
-			result = computacao(estadoAtual, "?", pilha, palavra.length());
+			result = computacao(estadoAtual, "?", pilha, palavra);
 			estadoAtual = result[0];
 			pilha = result[1];
 		
 			System.out.println("(" + estadoAtual + ", " + palavra + ", " + pilha + ")");
 			
 			// Se a palavra estiver vazia e o estado atual for o final
-			if (palavra.equals("#") == true && estadoAtual.equals("qF") == true) {
+			if (palavra.equals("#") == true && estadoAtual.equals("qF") == true)
+			{
 				System.out.println("ACEITA!");
 			}
 			else
@@ -268,7 +314,7 @@ public class AutomatoPilha {
 	
 	
 	public static String[] computacao(
-			String estadoAtual, String palavra, String pilha, int tamEntrada) {
+			String estadoAtual, String palavra, String pilha, String entrada) {
 
 		String dadosResultantes[] = {"", ""};
 		
@@ -276,7 +322,7 @@ public class AutomatoPilha {
 		{
 			if (listaEstados[i].getNomeEstado().equals(estadoAtual) == true)
 			{
-				dadosResultantes = listaEstados[i].computar(estadoAtual, palavra, pilha, tamEntrada);
+				dadosResultantes = listaEstados[i].computar(estadoAtual, palavra, pilha, entrada);
 				break;
 			}
 		}

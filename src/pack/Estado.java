@@ -23,13 +23,17 @@ public class Estado {
 		return this.listaTransicoesEstado;
 	}
 	
-	public String[] computar(String estadoAtual, String palavra, String conteudoPilha, int tamEntrada) {
+	public String[] computar(String estadoAtual, String palavra, String conteudoPilha, String entrada) {
 
+		String[][] matrizResultados = new String[listaTransicoesEstado.size()][2];
+		
 		// 0 = estado alcancado pela transicao, 1 = novo conteudo da pilha
 		String[] dados = {"", ""};
 		
-		for (Transicao tr : listaTransicoesEstado)
+		for (int k = 0; k < listaTransicoesEstado.size(); k++)
 		{
+			Transicao tr = listaTransicoesEstado.get(k);
+			
 			if (tr.getSimboloLidoEntrada().equals(palavra.substring(0, 1)) == true)
 			{
 				// Computacao
@@ -81,10 +85,28 @@ public class Estado {
 								{
 									String conteudoEmpilhar = tr.getSimboloEmpilhadoPilha();
 									
-									// Se a pilha tiver apenas esse simbolo, ela se torna vazia
-									if (conteudoPilha.length() == 1 && conteudoEmpilhar.equals("#") == true)
+									// Caso o simbolo a ser empilhado seja vazio
+									if (conteudoEmpilhar.equals("#") == true)
 									{
-										dados[1] = "#";
+										/* Se a pilha tiver apenas esse simbolo,
+										 * ela se torna vazia
+										 */
+										if (conteudoPilha.length() == 1)
+										{
+											dados[1] = "#";
+										}
+										
+										else
+										{
+											// Apaga a variavel da pilha
+											dados[1] = conteudoPilha.substring(0, i);
+											
+											// Evitando ArrayOutOfBounds
+											if (i+1 < conteudoPilha.length())
+											{
+												dados[1] += conteudoPilha.substring(i+1);
+											}
+										}
 									}
 									
 									else
@@ -111,10 +133,19 @@ public class Estado {
 											/* Se o tamanho da nova pilha for maior que a palavra de entrada,
 											 * verifica outra transicao daquele estado
 											 */
-											if (dados[1].length() > tamEntrada)
+											int numTerminais = 0;
+											for (char simbolo : conteudoPilha.toCharArray())
 											{
+												if ((int) simbolo > 96 && (int) simbolo < 123)
+												{
+													numTerminais++;
+												}
+											}
+											
+											if (numTerminais > entrada.length())
+											{
+												dados[0] = "";
 												dados[1] = "";
-												continue;
 											}
 										}
 									}
@@ -156,30 +187,113 @@ public class Estado {
 						{
 							dados[0] = tr.getEstadoAlcancado();
 						}
-						
-						// Se nao, procura mais transicoes pra analisar
-						else
-						{
-							continue;
-						}
 					}
 				
-					break;
+//					break;
 				// Fim da computacao
+			}
+
+			/* Se nenhuma transicao foi utilizada,
+			 * informa a rejeicao da palavra
+			 */
+			if (dados[0].equals("") == true)
+			{
+				dados[0] = "REJ";
+				dados[1] = "REJ";
+			}
+			
+			/* Salva na matriz de resultados 
+			 * os resultados de cada transicao
+			 */
+			matrizResultados[k][0] = dados[0];
+			matrizResultados[k][1] = dados[1];
+			
+			dados[0] = "";
+			dados[1] = "";
+		}
+		
+		
+		/* Contabiliza o numero de transicoes que levam a
+		 * rejeicao da palavra
+		 */
+		int contadorCaminhosRejeicao = 0;
+		int indexTransicaoUnitaria = 0;
+		for (int i = 0; i < listaTransicoesEstado.size(); i++)
+		{
+			if (matrizResultados[i][0].equals("REJ") == true)
+			{
+				contadorCaminhosRejeicao++;
+			}
+			else
+			{
+				indexTransicaoUnitaria = i;
 			}
 		}
 		
-		
-		/* Se nenhuma transicao foi utilizada,
-		 * informa a rejeicao da palavra
+		/* Caso o numero de transicoes que levam a rejeicao seja exato
+		 * o numero total de transicoes - 1
+		 * 
+		 * Se houver apenas um caminho possivel que nao seja de rejeicao,
+		 * se trata de uma transicao de leitura e consumo 
+		 * do mesmo simbolo, pelas regras de construcao do automato
+		 * 
+		 * Logo, escolhe-se esse caminho possivel dentre os demais
 		 */
-		if (dados[0].equals("") == true)
+		if (contadorCaminhosRejeicao == listaTransicoesEstado.size() - 1)
 		{
-			dados[0] = "REJ";
-			dados[1] = "REJ";
+			return matrizResultados[indexTransicaoUnitaria];
 		}
 		
+		// Caso haja mais de um caminho possivel
+		else
+		{
+			int indexTransicaoEscolhida = 0;
+			int numMenorTerminais = 0;
+			for (int i = 0; i < listaTransicoesEstado.size(); i++)
+			{
+				String possivelNovaPilha = matrizResultados[i][1];
+
+				/* Procura uma transicao que resulte em uma
+				 * nova pilha igual a palavra de entrada,
+				 * e a escolhe dentre as demais
+				 */
+				if (possivelNovaPilha.equals(entrada) == true)
+				{
+					indexTransicaoEscolhida = i;
+					break;
+				}
+				
+				else
+				{
+					/* Se nao houver, procura pela transicao que resulte
+					 * em uma nova pilha com o numero de terminais o
+					 * mais proximo possivel do numero de terminais
+					 * da palavra de entrada,
+					 * e a escolhe dentre as demais
+					 */
+					int cont = 0;
+					for (char simbolo : possivelNovaPilha.toCharArray())
+					{
+						if ((int) simbolo > 96 && (int) simbolo < 123)
+						{
+							cont++;
+						}
+					}
+				
+					if (cont < numMenorTerminais && cont >= entrada.length())
+					{
+						numMenorTerminais = cont;
+						indexTransicaoEscolhida = i;
+					}
+				}
+			}
+			
+			return matrizResultados[indexTransicaoEscolhida];
+		}
 		
-		return dados;
+
+		
+		
+		//return dados;
 	}
 }
