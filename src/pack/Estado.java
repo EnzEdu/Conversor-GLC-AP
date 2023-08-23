@@ -213,6 +213,9 @@ public class Estado {
 		}
 		
 		
+
+		
+		
 		/* Contabiliza o numero de transicoes que levam a
 		 * rejeicao da palavra
 		 */
@@ -252,7 +255,6 @@ public class Estado {
 			for (int i = 0; i < listaTransicoesEstado.size(); i++)
 			{
 				String possivelNovaPilha = matrizResultados[i][1];
-				//System.out.println("caminho " + possivelNovaPilha);
 
 				/* Procura uma transicao que resulte em uma
 				 * nova pilha igual a palavra de entrada,
@@ -285,6 +287,7 @@ public class Estado {
 				
 				
 				// Procura dentro dessas novas pilhas salvas
+				ArrayList<Integer> indexRemovidos = new ArrayList<Integer>();
 				for (int index : indexPilhasComMesmoSimboloInicial)
 				{
 					char simboloPisoPilha = matrizResultados[index][1].charAt(matrizResultados[index][1].length()-1);
@@ -292,13 +295,41 @@ public class Estado {
 					/* Se o ultimo simbolo da pilha for igual do 
 					 * ultimo simbolo da entrada
 					 */
+//					if (simboloPisoPilha == entrada.charAt(entrada.length()-1) && matrizResultados[index][1].length() >= entrada.length())
 					if (simboloPisoPilha == entrada.charAt(entrada.length()-1))
 					{
 						/* Retorna a primeira transicao que 
 						 * resulta em uma pilha cujo primeiro e
 						 * ultimo simbolo sao os mesmos da palavra
 						 */
-						return matrizResultados[index];						
+						
+						int indexRecursaoDireita = -1;
+						for (char simbolo : matrizResultados[index][1].toCharArray())
+						{
+							if ((int) simbolo > 96 && (int) simbolo < 123)
+							{
+								indexRecursaoDireita++;
+							}
+						}
+						
+						if (indexRecursaoDireita != matrizResultados[index][1].length()-1)
+						{
+							boolean verifRecursaoDireita = true;
+							String substrNovaPilha = matrizResultados[index][1].substring(indexRecursaoDireita);
+							for (char simbolo : substrNovaPilha.toCharArray())
+							{
+								if ((int) simbolo > 96 && (int) simbolo < 123)
+								{
+									verifRecursaoDireita = false;
+									break;
+								}
+							}
+							
+							if (verifRecursaoDireita == true)
+							{
+								return matrizResultados[index];
+							}
+						}					
 					}
 					
 					
@@ -314,14 +345,21 @@ public class Estado {
 						}
 						
 						/* Se o ultimo simbolo for um outro terminal,
-						 * remove essa transicao da analise
+						 * salva o index da transicao para remocao
 						 */
 						else
 						{
-							indexPilhasComMesmoSimboloInicial.remove(index);
+							indexRemovidos.add(index);
 						}
 					}
 				}
+				
+				// Remove os index das transicoes nao-interessantes				
+				for (int indexRemocao : indexRemovidos)
+				{
+					boolean f = indexPilhasComMesmoSimboloInicial.remove(Integer.valueOf(indexRemocao));
+				}
+			
 				
 				
 				/* Se nao houver, procura pela transicao que resulte
@@ -363,7 +401,33 @@ public class Estado {
 					// Placeholder: ele pega a primeira transicao que
 					// gera uma pilha com o topo igual ao simbolo
 					// inicial da entrada
-					indexTransicaoEscolhida = indexPilhasComMesmoSimboloInicial.get(0);
+					
+					int indexMaisParecido = -1;
+					int contMaior = 0;
+					for (int ind : indexPilhasComMesmoSimboloInicial)
+					{
+						int cont = 0;
+						for (int k = 0; k < matrizResultados[ind][1].length(); k++)
+						{
+							if (k >= entrada.length() || k >= matrizResultados[ind][1].length())
+							{
+								break;
+							}
+							
+							if (matrizResultados[ind][1].charAt(k) == entrada.charAt(k))
+							{
+								cont++;
+							}
+						}
+						
+						if (indexMaisParecido == -1 || cont >= contMaior)
+						{
+							indexMaisParecido = ind;
+							contMaior = cont;
+						}
+					}
+					
+					indexTransicaoEscolhida = indexMaisParecido;
 				}
 				
 				// Se nao, procura entre todas
@@ -392,6 +456,12 @@ public class Estado {
 							numMenorTerminais = cont;
 							indexTransicaoEscolhida = i;
 						}
+					}
+					
+					System.out.println("INDEX: " + indexTransicaoEscolhida);
+					if (indexTransicaoEscolhida == -1)
+					{
+						indexTransicaoEscolhida = 0;
 					}
 				}
 				
