@@ -9,8 +9,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//		Scanner leitor = new Scanner(System.in);
-		
 		System.out.println("----------MAIN----------\n" +
 						   "Exemplo:\n" +
 						   "G = ({S},{a,b},P,S)\n" +
@@ -18,8 +16,6 @@ public class Main {
 		System.out.println("Escreva a GLC nao-recursiva a esquerda: ");
 		
 		
-//		String regex = leitor.next();
-//		String info = "";
 
 		String[] infos = new String[2];
 		try {
@@ -57,7 +53,6 @@ public class Main {
 		
 		AutomatoPilha ap = new AutomatoPilha(infos);
 //		System.out.println(regex);
-		//AFNe automato = new AFNe(regex);
 	}
 
 }
