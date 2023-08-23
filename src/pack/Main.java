@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Main {
-	private static String nomeArquivo = "glc.txt";
+	private static String nomeArquivo = "glc3.txt";
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

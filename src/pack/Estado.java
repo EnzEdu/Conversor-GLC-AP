@@ -244,14 +244,15 @@ public class Estado {
 			return matrizResultados[indexTransicaoUnitaria];
 		}
 		
+		
 		// Caso haja mais de um caminho possivel
 		else
 		{
-			int indexTransicaoEscolhida = 0;
-			int numMenorTerminais = 0;
+			int indexTransicaoEscolhida = -1;
 			for (int i = 0; i < listaTransicoesEstado.size(); i++)
 			{
 				String possivelNovaPilha = matrizResultados[i][1];
+				//System.out.println("caminho " + possivelNovaPilha);
 
 				/* Procura uma transicao que resulte em uma
 				 * nova pilha igual a palavra de entrada,
@@ -260,9 +261,112 @@ public class Estado {
 				if (possivelNovaPilha.equals(entrada) == true)
 				{
 					indexTransicaoEscolhida = i;
-					break;
+					return matrizResultados[indexTransicaoEscolhida];
+				}
+			}
+			
+			
+			/* Se nao houver uma transicao
+			 * que gere uma pilha igual a palavra analisada
+			 */
+			if (indexTransicaoEscolhida == -1)
+			{
+				/* Salva o index das novas pilhas cujo topo
+				 * eh o mesmo simbolo inicial da entrada
+				 */
+				ArrayList<Integer> indexPilhasComMesmoSimboloInicial = new ArrayList<Integer>();
+				for (int k = 0; k < listaTransicoesEstado.size(); k++)
+				{
+					if (matrizResultados[k][1].charAt(0) == entrada.charAt(0))
+					{
+						indexPilhasComMesmoSimboloInicial.add(k);
+					}
 				}
 				
+				
+				// Procura dentro dessas novas pilhas salvas
+				for (int index : indexPilhasComMesmoSimboloInicial)
+				{
+					char simboloPisoPilha = matrizResultados[index][1].charAt(matrizResultados[index][1].length()-1);
+
+					/* Se o ultimo simbolo da pilha for igual do 
+					 * ultimo simbolo da entrada
+					 */
+					if (simboloPisoPilha == entrada.charAt(entrada.length()-1))
+					{
+						/* Retorna a primeira transicao que 
+						 * resulta em uma pilha cujo primeiro e
+						 * ultimo simbolo sao os mesmos da palavra
+						 */
+						return matrizResultados[index];						
+					}
+					
+					
+					// Caso contrario
+					else
+					{
+						/* Se o ultimo simbolo da pilha for uma variavel, 
+						 * deixa salva
+						 */
+						if ((int) simboloPisoPilha > 64 && (int) simboloPisoPilha < 91)
+						{
+							continue;
+						}
+						
+						/* Se o ultimo simbolo for um outro terminal,
+						 * remove essa transicao da analise
+						 */
+						else
+						{
+							indexPilhasComMesmoSimboloInicial.remove(index);
+						}
+					}
+				}
+				
+				
+				/* Se nao houver, procura pela transicao que resulte
+				 * em uma nova pilha com o numero de terminais o
+				 * mais proximo possivel do numero de terminais
+				 * da palavra de entrada,
+				 * e a escolhe dentre as demais
+				 */
+				int numMenorTerminais = 0;
+				
+				/* Caso exista transicoes com o topo da pilha igual ao
+				 * simbolo inicial da entrada, procura entre essas
+				 * transicoes
+				 */
+				if (indexPilhasComMesmoSimboloInicial.size() != 0)
+				{
+					/*
+					for (int k : indexPilhasComMesmoSimboloInicial)
+					{
+						int cont = 0;
+						for (char simbolo : matrizResultados[k][1].toCharArray())
+						{
+							if ((int) simbolo > 96 && (int) simbolo < 123)
+							{
+								cont++;
+							}
+						}
+						
+						if (cont < numMenorTerminais && cont >= entrada.length())
+						{
+							numMenorTerminais = cont;
+							indexTransicaoEscolhida = k;
+						}
+						System.out.println("k = " + k);
+					}
+					System.out.println("INDEX: " + indexTransicaoEscolhida);
+					*/
+					
+					// Placeholder: ele pega a primeira transicao que
+					// gera uma pilha com o topo igual ao simbolo
+					// inicial da entrada
+					indexTransicaoEscolhida = indexPilhasComMesmoSimboloInicial.get(0);
+				}
+				
+				// Se nao, procura entre todas
 				else
 				{
 					/* Se nao houver, procura pela transicao que resulte
@@ -271,24 +375,33 @@ public class Estado {
 					 * da palavra de entrada,
 					 * e a escolhe dentre as demais
 					 */
-					int cont = 0;
-					for (char simbolo : possivelNovaPilha.toCharArray())
+					for (int i = 0; i < listaTransicoesEstado.size(); i++)
 					{
-						if ((int) simbolo > 96 && (int) simbolo < 123)
+						String possivelNovaPilha = matrizResultados[i][1];
+						int cont = 0;
+						for (char simbolo : possivelNovaPilha.toCharArray())
 						{
-							cont++;
+							if ((int) simbolo > 96 && (int) simbolo < 123)
+							{
+								cont++;
+							}
+						}
+						
+						if (cont < numMenorTerminais && cont >= entrada.length())
+						{
+							numMenorTerminais = cont;
+							indexTransicaoEscolhida = i;
 						}
 					}
-				
-					if (cont < numMenorTerminais && cont >= entrada.length())
-					{
-						numMenorTerminais = cont;
-						indexTransicaoEscolhida = i;
-					}
 				}
+				
+				return matrizResultados[indexTransicaoEscolhida];
 			}
 			
-			return matrizResultados[indexTransicaoEscolhida];
+			else
+			{	
+				return matrizResultados[indexTransicaoEscolhida];
+			}
 		}
 		
 
