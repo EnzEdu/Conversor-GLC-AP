@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 public class AutomatoPilha {
 	private static Estado[] listaEstados;
+	public static ArrayList<Character> terminais;
 
 	public AutomatoPilha(String[] infos) {
 		
@@ -36,7 +37,7 @@ public class AutomatoPilha {
 		// Elementos do automato
 		
 			// Terminais "{a,b,c}" = [a, b, c]
-			ArrayList<Character> terminais = new ArrayList<Character>(
+			terminais = new ArrayList<Character>(
 					elementosGramatica[1]									// "{a,b,c}"
 						.substring(1, elementosGramatica[1].length()-1)		// "a,b,c"
 						.replaceAll(",", "")								// "abc"
@@ -103,7 +104,7 @@ public class AutomatoPilha {
 		for (int i = 0; i < estados.size(); i++)
 		{
 			// Cria o estado
-			listaEstados[i] = new Estado(estados.get(i));
+			listaEstados[i] = new Estado(estados.get(i), terminais);
 
 			// Adiciona as transicoes de acordo com o estado
 			if (i == 0)
@@ -328,5 +329,10 @@ public class AutomatoPilha {
 		}
 		
 		return dadosResultantes;
+	}
+	
+	
+	public static ArrayList<Character> getTerminais() {
+		return terminais;
 	}
 }

@@ -1,14 +1,17 @@
 package pack;
 
 import java.util.ArrayList;
+import pack.AutomatoPilha;
 
 public class Estado {
 	private String nomeEstado;
 	private ArrayList<Transicao> listaTransicoesEstado;
+	private static ArrayList<Character> terminais;
 	
-	public Estado(String nome) {
+	public Estado(String nome, ArrayList<Character> terminais) {
 		this.nomeEstado = nome;
 		this.listaTransicoesEstado = new ArrayList<Transicao>();
+		this.terminais = terminais;
 	}
 	
 	public void adicionaTransicao(Transicao tr) {
@@ -136,7 +139,8 @@ public class Estado {
 											int numTerminais = 0;
 											for (char simbolo : conteudoPilha.toCharArray())
 											{
-												if ((int) simbolo > 96 && (int) simbolo < 123)
+//												if ((int) simbolo > 96 && (int) simbolo < 123)
+												if (terminais.indexOf(simbolo) != -1)
 												{
 													numTerminais++;
 												}
@@ -286,186 +290,47 @@ public class Estado {
 				}
 				
 				
-				// Procura dentro dessas novas pilhas salvas
-				ArrayList<Integer> indexRemovidos = new ArrayList<Integer>();
+				//
+				int indexPilhaMaisProximaDaPalavra = -1;
+				int maiorStreakTerminais = 0;
 				for (int index : indexPilhasComMesmoSimboloInicial)
 				{
-					char simboloPisoPilha = matrizResultados[index][1].charAt(matrizResultados[index][1].length()-1);
-
-					/* Se o ultimo simbolo da pilha for igual do 
-					 * ultimo simbolo da entrada
-					 */
-//					if (simboloPisoPilha == entrada.charAt(entrada.length()-1) && matrizResultados[index][1].length() >= entrada.length())
-					if (simboloPisoPilha == entrada.charAt(entrada.length()-1))
-					{
-						/* Retorna a primeira transicao que 
-						 * resulta em uma pilha cujo primeiro e
-						 * ultimo simbolo sao os mesmos da palavra
-						 */
-						
-						int indexRecursaoDireita = -1;
-						for (char simbolo : matrizResultados[index][1].toCharArray())
-						{
-							if ((int) simbolo > 96 && (int) simbolo < 123)
-							{
-								indexRecursaoDireita++;
-							}
-						}
-						
-						if (indexRecursaoDireita != matrizResultados[index][1].length()-1)
-						{
-							boolean verifRecursaoDireita = true;
-							String substrNovaPilha = matrizResultados[index][1].substring(indexRecursaoDireita);
-							for (char simbolo : substrNovaPilha.toCharArray())
-							{
-								if ((int) simbolo > 96 && (int) simbolo < 123)
-								{
-									verifRecursaoDireita = false;
-									break;
-								}
-							}
-							
-							if (verifRecursaoDireita == true)
-							{
-								return matrizResultados[index];
-							}
-						}					
-					}
+					//
+					String novaPilha = matrizResultados[index][1];
 					
-					
-					// Caso contrario
-					else
+					int indexSimbolo = 0;
+					int cont = 0;
+					while(indexSimbolo < novaPilha.length() && indexSimbolo < entrada.length())
 					{
-						/* Se o ultimo simbolo da pilha for uma variavel, 
-						 * deixa salva
-						 */
-						if ((int) simboloPisoPilha > 64 && (int) simboloPisoPilha < 91)
+						if (novaPilha.charAt(indexSimbolo) == entrada.charAt(indexSimbolo))
 						{
-							continue;
+							cont++;
 						}
-						
-						/* Se o ultimo simbolo for um outro terminal,
-						 * salva o index da transicao para remocao
-						 */
 						else
 						{
-							indexRemovidos.add(index);
-						}
-					}
-				}
-				
-				// Remove os index das transicoes nao-interessantes				
-				for (int indexRemocao : indexRemovidos)
-				{
-					boolean f = indexPilhasComMesmoSimboloInicial.remove(Integer.valueOf(indexRemocao));
-				}
-			
-				
-				
-				/* Se nao houver, procura pela transicao que resulte
-				 * em uma nova pilha com o numero de terminais o
-				 * mais proximo possivel do numero de terminais
-				 * da palavra de entrada,
-				 * e a escolhe dentre as demais
-				 */
-				int numMenorTerminais = 0;
-				
-				/* Caso exista transicoes com o topo da pilha igual ao
-				 * simbolo inicial da entrada, procura entre essas
-				 * transicoes
-				 */
-				if (indexPilhasComMesmoSimboloInicial.size() != 0)
-				{
-					/*
-					for (int k : indexPilhasComMesmoSimboloInicial)
-					{
-						int cont = 0;
-						for (char simbolo : matrizResultados[k][1].toCharArray())
-						{
-							if ((int) simbolo > 96 && (int) simbolo < 123)
-							{
-								cont++;
-							}
+							break;
 						}
 						
-						if (cont < numMenorTerminais && cont >= entrada.length())
-						{
-							numMenorTerminais = cont;
-							indexTransicaoEscolhida = k;
-						}
-						System.out.println("k = " + k);
-					}
-					System.out.println("INDEX: " + indexTransicaoEscolhida);
-					*/
-					
-					// Placeholder: ele pega a primeira transicao que
-					// gera uma pilha com o topo igual ao simbolo
-					// inicial da entrada
-					
-					int indexMaisParecido = -1;
-					int contMaior = 0;
-					for (int ind : indexPilhasComMesmoSimboloInicial)
-					{
-						int cont = 0;
-						for (int k = 0; k < matrizResultados[ind][1].length(); k++)
-						{
-							if (k >= entrada.length() || k >= matrizResultados[ind][1].length())
-							{
-								break;
-							}
-							
-							if (matrizResultados[ind][1].charAt(k) == entrada.charAt(k))
-							{
-								cont++;
-							}
-						}
 						
-						if (indexMaisParecido == -1 || cont >= contMaior)
-						{
-							indexMaisParecido = ind;
-							contMaior = cont;
-						}
+						indexSimbolo++;
 					}
 					
-					indexTransicaoEscolhida = indexMaisParecido;
+					if (cont >= maiorStreakTerminais)
+					{
+						maiorStreakTerminais = cont;
+						indexPilhaMaisProximaDaPalavra = index;
+					}
 				}
 				
-				// Se nao, procura entre todas
-				else
+				if (indexPilhaMaisProximaDaPalavra == -1)
 				{
-					/* Se nao houver, procura pela transicao que resulte
-					 * em uma nova pilha com o numero de terminais o
-					 * mais proximo possivel do numero de terminais
-					 * da palavra de entrada,
-					 * e a escolhe dentre as demais
-					 */
-					for (int i = 0; i < listaTransicoesEstado.size(); i++)
-					{
-						String possivelNovaPilha = matrizResultados[i][1];
-						int cont = 0;
-						for (char simbolo : possivelNovaPilha.toCharArray())
-						{
-							if ((int) simbolo > 96 && (int) simbolo < 123)
-							{
-								cont++;
-							}
-						}
-						
-						if (cont < numMenorTerminais && cont >= entrada.length())
-						{
-							numMenorTerminais = cont;
-							indexTransicaoEscolhida = i;
-						}
-					}
-					
-					if (indexTransicaoEscolhida == -1)
-					{
-						indexTransicaoEscolhida = 0;
-					}
+					indexPilhaMaisProximaDaPalavra = 0;
 				}
 				
-				return matrizResultados[indexTransicaoEscolhida];
+				
+				return matrizResultados[indexPilhaMaisProximaDaPalavra];
 			}
+			
 			
 			else
 			{	
