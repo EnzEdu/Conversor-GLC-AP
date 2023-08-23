@@ -187,13 +187,13 @@ public class AutomatoPilha {
 	public static String reconhecer(String palavra) {
 		String estadoAtual = "q0";
 		String pilha = "#";
-		String resultado = "placeholder";
 		String result[];
 		
 		
 		System.out.println("\nRECONHECIMENTO:");
 		System.out.println("(" + estadoAtual + ", " + palavra + ", " + pilha + ")");
 
+		
 		
 		// Transicao vazia de q0		
 		result = computacao(estadoAtual, "#", pilha, palavra.length());
@@ -203,7 +203,8 @@ public class AutomatoPilha {
 		System.out.println("(" + estadoAtual + ", " + palavra + ", " + pilha + ")");
 
 		
-		// Transicoes sucessivas ate gerar a pilha ficar igual a palavra
+		
+		// Transicoes sucessivas ate a pilha ficar igual (ou quase) a palavra
 		while (pilha.length() < palavra.length())
 		{
 			result = computacao(estadoAtual, "#", pilha, palavra.length());
@@ -214,16 +215,18 @@ public class AutomatoPilha {
 		}
 
 		
-		// 
+		
+		// Transicoes de q1 consumindo terminais da entrada
 		while (palavra.equals("#") != true && estadoAtual.equals("REJ") != true)
 		{
 			result = computacao(estadoAtual, palavra, pilha, palavra.length());
 			estadoAtual = result[0];
 			
-			// Se o tamanho da pilha antiga for o tamanho da pilha nova + 1,
-			// e se a nova pilha for igual a pilha antiga sem o primeiro caractere,
-			// presume-se um consumo de caractere da palavra de entrada
-			// Entao, a palavra eh atualizada
+			/* Se o tamanho da pilha antiga for o tamanho da pilha nova + 1,
+			 * e se a nova pilha for igual a pilha antiga sem o primeiro caractere,
+			 * presume-se um consumo de caractere da palavra de entrada
+			 * Entao, a palavra eh atualizada
+			 */
 			if (result[1].length() + 1 == pilha.length() &&
 				result[1].equals(pilha.substring(1)) == true)
 			{
@@ -247,15 +250,18 @@ public class AutomatoPilha {
 		}
 		
 		
-		//
+		
+		// Caso a palavra nao tenha sido rejeitada no caminho
 		if (estadoAtual.equals("REJ") == false)
 		{
+			// Testa se a pilha esta vazia
 			result = computacao(estadoAtual, "?", pilha, palavra.length());
 			estadoAtual = result[0];
 			pilha = result[1];
 		
 			System.out.println("(" + estadoAtual + ", " + palavra + ", " + pilha + ")");
 			
+			// Se a palavra estiver vazia e o estado atual for o final
 			if (palavra.equals("#") == true && estadoAtual.equals("qF") == true) {
 				return "ACEITA!";
 			}
@@ -268,45 +274,6 @@ public class AutomatoPilha {
 		{
 			return "REJEITADA!";
 		}
-		
-		/*
-		if (palavra.equals("#") == true && estadoAtual.equals("qF") == true)
-		{
-			return "ACEITA!";
-		}
-//		else if (estadoAtual.equals("REJ") == true)
-		else
-		{
-			return "REJEITADA!";
-		}
-		*/
-		/*
-		for (char simbolo : palavra.toCharArray())
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				if (listaEstados[i].getNomeEstado().equals(estadoAtual) == true)
-				{
-					System.out.println("(" + estadoAtual + ", " + palavra + ", " + pilha + ")");
-					//System.out.println("Pilha = " + pilha.charAt(0));
-					String dadosResultantes[] = listaEstados[i].computar(estadoAtual, Character.toString(simbolo), pilha);
-					
-					if (dadosResultantes[0].equals("REJ") == true) {
-						return "REJEITADA";
-					}
-					else if (dadosResultantes[0].equals("qF") == true)
-					{
-						return "ACEITA";
-					}
-					
-					estadoAtual = dadosResultantes[0];
-					pilha = dadosResultantes[1];
-					break;
-				}
-			}
-		}
-		*/
-		//return resultado;
 	}
 	
 	public static String[] computacao(
