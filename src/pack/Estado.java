@@ -6,14 +6,26 @@ public class Estado {
 	private String nomeEstado;
 	private ArrayList<Transicao> listaTransicoesEstado;
 	
-	public Estado(String nome, ArrayList<Transicao> transicoes) {
+	public Estado(String nome) {
 		this.nomeEstado = nome;
-		this.listaTransicoesEstado = transicoes;
+		this.listaTransicoesEstado = new ArrayList<Transicao>();
+	}
+	
+	public void adicionaTransicao(Transicao tr) {
+		this.listaTransicoesEstado.add(tr);
+	}
+	
+	public String getNomeEstado() {
+		return this.nomeEstado;
+	}
+	
+	public ArrayList<Transicao> getListaTransicoes() {
+		return this.listaTransicoesEstado;
 	}
 	
 	public String[] computar(String estadoAtual, String simbolo, String conteudoPilha) {
 		// 1 = estado alcancado pela transicao, 2 = novo conteudo da pilha
-		String[] dados = new String[2];
+		String[] dados = {"", ""};
 		
 		for (Transicao tr : listaTransicoesEstado)
 		{
@@ -79,12 +91,20 @@ public class Estado {
 						
 						
 					// Empilhamento na pilha
-						String conteudoEmpilhar = tr.getSimboloEmpilhadoPilha();
-						conteudoPilha = conteudoEmpilhar + conteudoPilha;
+					String conteudoEmpilhar = tr.getSimboloEmpilhadoPilha();
+					conteudoPilha = conteudoEmpilhar + conteudoPilha;
+					dados[1] = conteudoPilha;
 						
 					break;
 			}
 		}
+		
+		if (dados[0].equals("") == true)
+		{
+			dados[0] = "REJ";
+			dados[1] = "REJ";
+		}
+		
 		
 		return dados;
 	}
