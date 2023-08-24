@@ -1,7 +1,6 @@
 package pack;
 
 import java.util.ArrayList;
-import pack.AutomatoPilha;
 
 public class Estado {
 	private String nomeEstado;
@@ -139,7 +138,6 @@ public class Estado {
 											int numTerminais = 0;
 											for (char simbolo : conteudoPilha.toCharArray())
 											{
-//												if ((int) simbolo > 96 && (int) simbolo < 123)
 												if (terminais.indexOf(simbolo) != -1)
 												{
 													numTerminais++;
@@ -193,7 +191,6 @@ public class Estado {
 						}
 					}
 				
-//					break;
 				// Fim da computacao
 			}
 
@@ -290,17 +287,19 @@ public class Estado {
 				}
 				
 				
-				//
+				/* Escolhe, dentre as novas pilhas geradas pelas
+				 * transicoes, a mais similar com a entrada
+				 */
 				int indexPilhaMaisProximaDaPalavra = -1;
 				int maiorStreakTerminais = 0;
 				for (int index : indexPilhasComMesmoSimboloInicial)
 				{
-					//
 					String novaPilha = matrizResultados[index][1];
-					//System.out.print(novaPilha);
 					
 					int indexSimbolo = 0;
 					int cont = 0;
+					
+					// Contabiliza os terminais pela esquerda
 					while (indexSimbolo < novaPilha.length() && indexSimbolo < entrada.length())
 					{
 						if (novaPilha.charAt(indexSimbolo) == entrada.charAt(indexSimbolo))
@@ -315,8 +314,12 @@ public class Estado {
 						indexSimbolo++;
 					}
 					
+					/* Caso tenha encontrado alguma variavel
+					 * na pilha analisada
+					 */
 					if (indexSimbolo != novaPilha.length())
 					{
+						// Contabiliza os terminais pela direita
 						int indexSimboloDepois = 1;
 						while ((novaPilha.length()-indexSimboloDepois < novaPilha.length() && entrada.length()-indexSimboloDepois < entrada.length()) && (novaPilha.length()-indexSimboloDepois != indexSimbolo))
 						{
@@ -331,16 +334,18 @@ public class Estado {
 							
 							indexSimboloDepois++;
 						}
-						//System.out.println("   indexSimboloDepois="+indexSimboloDepois);
 					}
 					
-					//System.out.println(" " + indexSimbolo + " " + cont);
+					/* Salva o index da transicao com a pilha
+					 * mais similar a entrada
+					 */
 					if (cont >= maiorStreakTerminais)
 					{
 						maiorStreakTerminais = cont;
 						indexPilhaMaisProximaDaPalavra = index;
 					}
 				}
+				
 				
 				if (indexPilhaMaisProximaDaPalavra == -1)
 				{
@@ -371,17 +376,14 @@ public class Estado {
 						}
 					}
 					
-					//System.out.println("INDEX: " + indexTransicaoEscolhida);
+					
 					if (indexTransicaoEscolhida == -1)
 					{
 						indexTransicaoEscolhida = 0;
 					}
 					
 					
-					System.out.println("pilh = " + matrizResultados[indexTransicaoEscolhida][1]);
 					return matrizResultados[indexTransicaoEscolhida];
-					
-					//System.out.println("pilh = " + matrizResultados[indexPilhaMaisProximaDaPalavra][1]);
 				}
 				
 				
@@ -395,9 +397,6 @@ public class Estado {
 			}
 		}
 		
-
 		
-		
-		//return dados;
 	}
 }

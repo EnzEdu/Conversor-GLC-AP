@@ -146,8 +146,8 @@ public class AutomatoPilha {
 		
 		
 		// Imprime os estados e suas transicoes
-		/*
-		System.out.println("\n\nAUTOMATO COM PILHA:");
+		//
+		//System.out.println("\n\nAUTOMATO COM PILHA:");
 		for (int i = 0; i < estados.size(); i++)
 		{
 			ArrayList<Transicao> arr = listaEstados[i].getListaTransicoes();
@@ -161,7 +161,7 @@ public class AutomatoPilha {
 			}
 			System.out.println();
 		}
-		*/
+		//
 		
 		
 		

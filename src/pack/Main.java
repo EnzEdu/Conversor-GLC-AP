@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Main {
-	private static String nomeArquivo = "glc4.txt";
+	private static String nomeArquivo = "glc3.txt";
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -55,9 +55,9 @@ public class Main {
 			/* Cria o automato com as informacoes do arquivo
 			 * (gramatica, regras de producao)
 			 */
-			System.out.println("Criando automato com pilha...");
+			System.out.println("\n\nCriando automato com pilha...");
 			AutomatoPilha ap = new AutomatoPilha(infos);
-			System.out.println("Criado automato com pilha!\n");
+			System.out.println("\nCriado automato com pilha!\n\n");
 			
 			
 			// Recebe a palavra de entrada pro automato
